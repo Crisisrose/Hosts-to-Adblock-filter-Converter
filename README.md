@@ -1,7 +1,3 @@
-[English](#english) ｜ [日本語](#日本語)
-
----
-
 ## English
 
 ### Hosts to Adblock filter Converter
