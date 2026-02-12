@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HostsToAdblock</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Outfit:wght@500;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            /* Default to Dark Mode */
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-primary: #e1dfeb;
+            --text-secondary: #94a3b8;
+            --accent-color: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.4);
+            --btn-primary: #0ea5e9;
+            --btn-hover: #0284c7;
+            --editor-border: rgba(255, 255, 255, 0.1);
+            --font-main: 'Inter', sans-serif;
+            --font-heading: 'Outfit', sans-serif;
+            --transition-speed: 0.3s;
+        }
+
+        /* Light Mode Variables (Eye-friendly & WCAG AAA) */
+        :root.theme-light {
+            --bg-color: #cbd5e1;
+            --card-bg: #f1f5f9;
+            --text-primary: #020617;
+            --text-secondary: #334155;
+            --accent-color: #0481c5;
+            --accent-glow: rgba(3, 105, 161, 0.15);
+            --btn-primary: #0369a1;
+            --btn-hover: #075985;
+            --editor-border: rgba(15, 23, 42, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ===== Custom Scrollbar ===== */
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.25);
+            border-radius: 999px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(148, 163, 184, 0.4);
+        }
+
+        /* Light Mode Overrides for Scrollbar */
+        :root.theme-light ::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.55);
+        }
+
+        :root.theme-light ::-webkit-scrollbar-thumb:hover {
+            background: rgba(148, 163, 184, 0.75);
+        }
+
+        ::-webkit-scrollbar-corner {
+            background: transparent;
+        }
+
+        /* Firefox */
+        * {
+            scrollbar-width: auto;
+            scrollbar-color: rgba(148, 163, 184, 0.25) transparent;
+        }
+
+        :root.theme-light {
+            scrollbar-color: rgba(148, 163, 184, 0.55) transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        /* Background Animation */
+        .background-blobs {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            filter: blur(80px);
+        }
+
+        .blob {
+            position: absolute;
+            width: 40vw;
+            height: 40vw;
+            border-radius: 50%;
+            opacity: 0.2;
+            animation: move 20s infinite alternate;
+            transition: opacity var(--transition-speed);
+        }
+
+        :root.theme-light .blob {
+            opacity: 0.05;
+        }
+
+        .blob-1 {
+            background: #4f46e5;
+            top: -10%;
+            left: -10%;
+        }
+
+        .blob-2 {
+            background: #0ea5e9;
+            bottom: -10%;
+            right: -10%;
+            animation-delay: -5s;
+        }
+
+        .blob-3 {
+            background: #8b5cf6;
+            top: 40%;
+            left: 40%;
+            animation-delay: -10s;
+        }
+
+        @keyframes move {
+            from {
+                transform: translate(0, 0);
+            }
+
+            to {
+                transform: translate(100px, 50px);
+            }
+        }
+
+        /* Header */
+        header {
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--editor-border);
+        }
+
+        .logo h1 {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .logo h1 span {
+            color: var(--accent-color);
+        }
+
+        .github-link a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: 0.3s;
+            border: 1px solid var(--editor-border);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+        }
+
+        .github-link a:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--accent-color);
+        }
+
+        /* Theme Toggle Button */
+        #theme-toggle {
+            display: grid;
+            grid-template-columns: 2.8rem 1fr;
+            align-items: center;
+            width: 7.5rem;
+            padding: 0.5rem 0.75rem 0.5rem 0;
+            border-radius: 2rem;
+            border: 1px solid var(--editor-border);
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1rem;
+            /* Matched to GitHub original */
+            font-weight: 500;
+            transition: var(--transition-speed);
+            background: transparent;
+        }
+
+        #theme-toggle:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--accent-color);
+        }
+
+        .github-link a svg,
+        #theme-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #theme-text {
+            text-align: center;
+            padding-right: 0.25rem;
+        }
+
+        /* Specific shifts for shorter words to center them better in the available space */
+        #theme-toggle.active-dark #theme-text,
+        #theme-toggle.active-light #theme-text {
+            padding-right: 1.25rem;
+        }
+
+        /* Themes container */
+        .right-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* ===== Golden-Ratio Layout =====
+         *
+         *  No centre control section any more — just two editors
+         *  separated by the grid gap.
+         *
+         *  We want:
+         *    left-margin : gap : right-margin  =  1.618 : 1 : 1.618
+         *
+         *  CSS Grid approach:
+         *    columns:  1.618fr  5fr  5fr  1.618fr
+         *    gap:      (acts as the "1" unit between the two 5fr editors)
+         *
+         *  The gap value is set so the proportions hold visually.
+         * ============================================== */
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            padding: 2rem 0;
+            position: relative;
+        }
+
+        .container {
+            width: 100%;
+            max-width: none;
+            margin: 0;
+            display: grid;
+            grid-template-columns: 1.618fr 5fr 1fr 5fr 1.618fr;
+            column-gap: 0;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Place editors explicitly — skip the outer golden-ratio margins */
+        .container>.editor-section:nth-child(1) {
+            grid-column: 2;
+        }
+
+        .container>.editor-section:nth-child(2) {
+            grid-column: 4;
+        }
+
+        .editor-section {
+            background: var(--card-bg);
+            backdrop-filter: blur(24px);
+            border: 1px solid var(--editor-border);
+            border-radius: 1.618rem;
+            overflow: hidden;
+            height: 75vh;
+            display: flex;
+            flex-direction: column;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color var(--transition-speed), background-color var(--transition-speed);
+            position: relative;
+        }
+
+        :root.theme-light .editor-section {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        }
+
+        .editor-section:focus-within {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .editor-header {
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid var(--editor-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .editor-header h2 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+        }
+
+        .actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            /* Increased from 0.25rem */
+        }
+
+        textarea {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 1.618rem;
+            color: var(--text-primary);
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 1rem;
+            line-height: 1.618;
+            resize: none;
+            outline: none;
+        }
+
+        textarea::placeholder {
+            color: rgba(148, 163, 184, 0.3);
+        }
+
+        :root.theme-light textarea::placeholder {
+            color: rgba(122, 128, 135, 0.45);
+        }
+
+        .btn-icon {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-icon:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Footer */
+        footer {
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--accent-color);
+            color: var(--bg-color);
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 100;
+            opacity: 0;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 1024px) {
+            main {
+                padding: 1rem;
+            }
+
+            .container {
+                grid-template-columns: 1fr;
+                column-gap: 0;
+                row-gap: 1.5rem;
+            }
+
+            .container>.editor-section:nth-child(1),
+            .container>.editor-section:nth-child(2) {
+                grid-column: 1;
+            }
+
+            .editor-section {
+                height: 45vh;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+    <header>
+        <div class="logo">
+            <h1><span>Hosts</span>To<span>Adblock</span></h1>
+        </div>
+        <div class="right-actions">
+            <div class="github-link">
+                <a href="https://github.com/yourusername/hosts-to-adblock" target="_blank">
+                    <svg height="24" viewBox="0 0 16 16" width="24" fill="currentColor">
+                        <path
+                            d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z">
+                        </path>
+                    </svg>
+                    GitHub
+                </a>
+            </div>
+            <button id="theme-toggle" title="Switch Theme">
+                <span id="theme-icon"></span>
+                <span id="theme-text">System</span>
+            </button>
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <!-- Input Editor -->
+            <div class="editor-section">
+                <div class="editor-header">
+                    <h2>Input (hosts)</h2>
+                    <div class="actions">
+                        <button id="clear-btn" class="btn-icon" title="Clear">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path
+                                    d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6" />
+                            </svg>
+                        </button>
+                        <button id="paste-btn" class="btn-icon" title="Paste from Clipboard">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                                <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <textarea id="input-text"
+                    placeholder="example:&#10;127.0.0.1 ads.example.com&#10;0.0.0.0 tracking.site.net"></textarea>
+            </div>
+            <!-- Output Editor -->
+            <div class="editor-section">
+                <div class="editor-header">
+                    <h2>Output (Adblock filter)</h2>
+                    <div class="actions">
+                        <button id="copy-btn" class="btn-icon" title="Copy to Clipboard">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <textarea id="output-text" readonly
+                    placeholder="example:&#10;||ads.example.com^&#10;||tracking.site.net^"></textarea>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2026 HostsToAdblock</p>
+    </footer>
+    <div id="toast" class="toast">コピーしました！</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputText = document.getElementById('input-text');
+            const outputText = document.getElementById('output-text');
+            const clearBtn = document.getElementById('clear-btn');
+            const pasteBtn = document.getElementById('paste-btn');
+            const copyBtn = document.getElementById('copy-btn');
+            const toast = document.getElementById('toast');
+            const systemDomains = new Set([
+                'localhost', 'localhost.localdomain', 'local',
+                'broadcasthost', 'ip6-localhost', 'ip6-loopback',
+                'ip6-localnet', 'ip6-mcastprefix', 'ip6-allnodes',
+                'ip6-allrouters', 'ip6-allhosts', '0.0.0.0'
+            ]);
+            /* ── Auto-convert logic ── */
+            function convert() {
+                const lines = inputText.value.split('\n');
+                const results = [];
+                for (const line of lines) {
+                    const trimmed = line.trim();
+                    if (!trimmed || trimmed.startsWith('#')) continue;
+                    const withoutComment = trimmed.split('#')[0].trim();
+                    const parts = withoutComment.split(/\s+/);
+                    if (parts.length < 2) continue;
+                    const ip = parts[0];
+                    const domain = parts[1];
+                    if (['127.0.0.1', '0.0.0.0', '::1', '::'].includes(ip)) {
+                        if (!domain || systemDomains.has(domain.toLowerCase())) continue;
+                        results.push('||' + domain + '^');
+                    }
+                }
+                outputText.value = results.join('\n');
+            }
+            /* Trigger on every input change (typing, paste, cut, undo…) */
+            inputText.addEventListener('input', convert);
+            /* ── Paste button ── */
+            pasteBtn.addEventListener('click', async () => {
+                try {
+                    const text = await navigator.clipboard.readText();
+                    inputText.value = text;
+                    convert();
+                    inputText.focus();
+                } catch (err) {
+                    /* Fallback: focus the textarea so the user can Ctrl+V */
+                    inputText.focus();
+                }
+            });
+            /* ── Clear button ── */
+            clearBtn.addEventListener('click', () => {
+                inputText.value = '';
+                outputText.value = '';
+                inputText.focus();
+            });
+            /* ── Copy button ── */
+            copyBtn.addEventListener('click', () => {
+                if (!outputText.value) return;
+                navigator.clipboard.writeText(outputText.value).then(() => {
+                    showToast();
+                });
+            });
+            function showToast() {
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2000);
+            }
+
+            /* ── Theme Switcher ── */
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeIcon = document.getElementById('theme-icon');
+            const themeText = document.getElementById('theme-text');
+            const htmlElement = document.documentElement;
+
+            const ICON_SYSTEM = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>`;
+            const ICON_DARK = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+            const ICON_LIGHT = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+
+            let currentTheme = localStorage.getItem('theme') || 'system';
+
+            function applyTheme(theme) {
+                const systemIsDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+                // Update button classes for specific text alignment
+                themeToggle.classList.remove('active-system', 'active-dark', 'active-light');
+                themeToggle.classList.add(`active-${theme}`);
+
+                if (theme === 'system') {
+                    if (systemIsDark) {
+                        htmlElement.classList.remove('theme-light');
+                    } else {
+                        htmlElement.classList.add('theme-light');
+                    }
+                    themeIcon.innerHTML = ICON_SYSTEM;
+                    themeText.innerText = 'System';
+                } else if (theme === 'dark') {
+                    htmlElement.classList.remove('theme-light');
+                    themeIcon.innerHTML = ICON_DARK;
+                    themeText.innerText = 'Dark';
+                } else {
+                    htmlElement.classList.add('theme-light');
+                    themeIcon.innerHTML = ICON_LIGHT;
+                    themeText.innerText = 'Light';
+                }
+
+                localStorage.setItem('theme', theme);
+                currentTheme = theme;
+            }
+
+            themeToggle.addEventListener('click', () => {
+                if (currentTheme === 'system') applyTheme('dark');
+                else if (currentTheme === 'dark') applyTheme('light');
+                else applyTheme('system');
+            });
+
+            // Listen for system theme changes
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+                if (currentTheme === 'system') applyTheme('system');
+            });
+
+            // Initial apply
+            applyTheme(currentTheme);
+        });
+    </script>
+</body>
+
+</html>
