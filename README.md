@@ -2,7 +2,7 @@
 
 ### Hosts to Adblock filter Converter
 
-Converts hosts files into DNS blocklists compatible with AdblockPlus syntax, for use with ad blockers such as uBlock Origin.
+Converts hosts-formatted text into DNS blocklists compatible with AdblockPlus syntax, for use with ad blockers such as uBlock Origin.
 
 #### Example
 
@@ -22,9 +22,9 @@ Converts hosts files into DNS blocklists compatible with AdblockPlus syntax, for
 
 ## 日本語
 
-### Hosts to Adblock filter Converter
+### HostsConverter
 
-Hosts形式のファイルを、uBlock Origin等の広告ブロッカーで使用可能なAdblockPlus形式のDNSブロックリストに変換します。
+Hosts形式のテキストを、uBlock Origin等の広告ブロッカーで使用可能なAdblockPlus形式のDNSブロックリストに変換します。
 
 #### 使用例
 
