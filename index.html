@@ -508,23 +508,39 @@
             ]);
             /* ── Auto-convert logic ── */
             function convert() {
-                const lines = inputText.value.split('\n');
-                const results = [];
-                for (const line of lines) {
-                    const trimmed = line.trim();
-                    if (!trimmed || trimmed.startsWith('#')) continue;
-                    const withoutComment = trimmed.split('#')[0].trim();
-                    const parts = withoutComment.split(/\s+/);
-                    if (parts.length < 2) continue;
-                    const ip = parts[0];
-                    const domain = parts[1];
-                    if (['127.0.0.1', '0.0.0.0', '::1', '::'].includes(ip)) {
-                        if (!domain || systemDomains.has(domain.toLowerCase())) continue;
-                        results.push('||' + domain + '^');
-                    }
-                }
-                outputText.value = results.join('\n');
+    const lines = inputText.value.split('\n');
+    const results = ['[Adblock Plus]'];
+    for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed) {
+            results.push('');
+            continue;
+        }
+        if (trimmed.startsWith('#')) {
+            results.push('!' + trimmed.slice(1));
+            continue;
+        }
+        const commentIndex = trimmed.indexOf('#');
+        let mainPart = trimmed;
+        let inlineComment = '';
+        if (commentIndex !== -1) {
+            mainPart = trimmed.slice(0, commentIndex).trim();
+            inlineComment = trimmed.slice(commentIndex);
+        }
+        const parts = mainPart.split(/\s+/);
+        if (parts.length < 2) continue;
+        const ip = parts[0];
+        const domain = parts[1];
+        if (['127.0.0.1', '0.0.0.0', '::1', '::'].includes(ip)) {
+            if (!domain || systemDomains.has(domain.toLowerCase())) continue;
+            if (inlineComment) {
+                results.push('!' + inlineComment.slice(1));
             }
+            results.push('||' + domain + '^');
+        }
+    }
+    outputText.value = results.join('\n');
+}
             /* Trigger on every input change (typing, paste, cut, undo…) */
             inputText.addEventListener('input', convert);
             /* ── Paste button ── */
@@ -617,3 +633,4 @@
 
 
 </html>
+
