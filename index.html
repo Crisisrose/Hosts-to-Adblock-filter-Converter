@@ -369,6 +369,13 @@
             text-align: center;
             color: var(--text-secondary);
             font-size: 0.8rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        footer p {
+            position: relative;
+            left: -0.3em;
         }
 
         /* Toast Notification */
@@ -394,6 +401,30 @@
 
         /* ===== Responsive ===== */
         @media (max-width: 1024px) {
+            header {
+                flex-wrap: wrap;
+                gap: 0.75rem;
+                padding: 1rem;
+            }
+
+            .logo h1 {
+                font-size: 1.2rem;
+            }
+
+            .right-actions {
+                gap: 0.5rem;
+            }
+
+            .github-link a {
+                padding: 0.4rem 0.75rem;
+                font-size: 0.85rem;
+            }
+
+            #theme-toggle {
+                width: 6.5rem;
+                font-size: 0.85rem;
+            }
+
             main {
                 padding: 1rem;
             }
@@ -491,7 +522,7 @@
     <footer>
         <p>&copy; 2026 Crisisrose</p>
     </footer>
-    <div id="toast" class="toast">コピーしました！</div>
+    <div id="toast" class="toast">copied !</div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const inputText = document.getElementById('input-text');
@@ -508,41 +539,41 @@
             ]);
             /* ── Auto-convert logic ── */
             function convert() {
-    const lines = inputText.value.split('\n');
-    const results = ['[Adblock Plus]'];
-    for (const line of lines) {
-        const trimmed = line.trim();
-        if (!trimmed) {
-            results.push('');
-            continue;
-        }
-        if (trimmed.startsWith('#')) {
-    let comment = '!' + trimmed.slice(1);
-    comment = comment.replace(/^! Project home page:/i, '! Homepage:');
-    results.push(comment);
-    continue;
-}
-        const commentIndex = trimmed.indexOf('#');
-        let mainPart = trimmed;
-        let inlineComment = '';
-        if (commentIndex !== -1) {
-            mainPart = trimmed.slice(0, commentIndex).trim();
-            inlineComment = trimmed.slice(commentIndex);
-        }
-        const parts = mainPart.split(/\s+/);
-        if (parts.length < 2) continue;
-        const ip = parts[0];
-        const domain = parts[1];
-        if (['127.0.0.1', '0.0.0.0', '::1', '::'].includes(ip)) {
-            if (!domain || systemDomains.has(domain.toLowerCase())) continue;
-            if (inlineComment) {
-                results.push('!' + inlineComment.slice(1));
+                const lines = inputText.value.split('\n');
+                const results = ['[Adblock Plus]'];
+                for (const line of lines) {
+                    const trimmed = line.trim();
+                    if (!trimmed) {
+                        results.push('');
+                        continue;
+                    }
+                    if (trimmed.startsWith('#')) {
+                        let comment = '!' + trimmed.slice(1);
+                        comment = comment.replace(/^! Project home page:/i, '! Homepage:');
+                        results.push(comment);
+                        continue;
+                    }
+                    const commentIndex = trimmed.indexOf('#');
+                    let mainPart = trimmed;
+                    let inlineComment = '';
+                    if (commentIndex !== -1) {
+                        mainPart = trimmed.slice(0, commentIndex).trim();
+                        inlineComment = trimmed.slice(commentIndex);
+                    }
+                    const parts = mainPart.split(/\s+/);
+                    if (parts.length < 2) continue;
+                    const ip = parts[0];
+                    const domain = parts[1];
+                    if (['127.0.0.1', '0.0.0.0', '::1', '::'].includes(ip)) {
+                        if (!domain || systemDomains.has(domain.toLowerCase())) continue;
+                        if (inlineComment) {
+                            results.push('!' + inlineComment.slice(1));
+                        }
+                        results.push('||' + domain + '^');
+                    }
+                }
+                outputText.value = results.join('\n');
             }
-            results.push('||' + domain + '^');
-        }
-    }
-    outputText.value = results.join('\n');
-}
             /* Trigger on every input change (typing, paste, cut, undo…) */
             inputText.addEventListener('input', convert);
             /* ── Paste button ── */
@@ -635,5 +666,3 @@
 
 
 </html>
-
-
