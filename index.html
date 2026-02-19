@@ -51,6 +51,12 @@
         }
 
         /* ===== Custom Scrollbar ===== */
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
         ::-webkit-scrollbar-track {
             background: transparent;
         }
@@ -64,27 +70,20 @@
             background: rgba(148, 163, 184, 0.4);
         }
 
-        /* Light Mode Overrides for Scrollbar */
         :root.theme-light ::-webkit-scrollbar-thumb {
-            background: rgba(148, 163, 184, 0.55);
+            background: rgba(148, 163, 184, 0.48);
         }
 
         :root.theme-light ::-webkit-scrollbar-thumb:hover {
-            background: rgba(148, 163, 184, 0.75);
+            background: rgba(148, 163, 184, 0.82);
         }
 
         ::-webkit-scrollbar-corner {
             background: transparent;
         }
 
-        /* Firefox */
-        * {
-            scrollbar-width: auto;
-            scrollbar-color: rgba(148, 163, 184, 0.25) transparent;
-        }
-
-        :root.theme-light {
-            scrollbar-color: rgba(148, 163, 184, 0.55) transparent;
+        ::-webkit-scrollbar-button {
+            display: none;
         }
 
         body {
@@ -242,20 +241,6 @@
             gap: 1rem;
         }
 
-        /* ===== Golden-Ratio Layout =====
-         *
-         *  No centre control section any more — just two editors
-         *  separated by the grid gap.
-         *
-         *  We want:
-         *    left-margin : gap : right-margin  =  1.618 : 1 : 1.618
-         *
-         *  CSS Grid approach:
-         *    columns:  1.618fr  5fr  5fr  1.618fr
-         *    gap:      (acts as the "1" unit between the two 5fr editors)
-         *
-         *  The gap value is set so the proportions hold visually.
-         * ============================================== */
         main {
             flex: 1;
             display: flex;
@@ -275,7 +260,6 @@
             position: relative;
         }
 
-        /* Place editors explicitly — skip the outer golden-ratio margins */
         .container>.editor-section:nth-child(1) {
             grid-column: 2;
         }
@@ -679,4 +663,3 @@
 
 
 </html>
-
